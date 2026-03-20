@@ -1,18 +1,27 @@
-import { products } from "../../shared/data/products";
+import { useState } from "react";
+
+const SEED_PRODUCTS = [
+  { id:1, name:"Velvet Glow Serum",       category:"Serums",       price:58, rating:4.9, image:"https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=80&q=60" },
+  { id:2, name:"Lumière Silk Foundation",  category:"Face",         price:45, rating:4.8, image:"https://images.unsplash.com/photo-1631730359585-38a4935cbec4?w=80&q=60" },
+  { id:3, name:"Rose Petal Lip Balm",      category:"Lips",         price:18, rating:4.7, image:"https://images.unsplash.com/photo-1586495777744-4e6232bf4d3e?w=80&q=60" },
+  { id:4, name:"Midnight Repair Cream",    category:"Moisturisers", price:72, rating:4.9, image:"https://images.unsplash.com/photo-1556228720-195a672e8a03?w=80&q=60" },
+  { id:5, name:"Sculpt & Define Brow Gel", category:"Eyes",         price:24, rating:4.6, image:"https://images.unsplash.com/photo-1583241800698-e8ab01830a66?w=80&q=60" },
+];
 
 export default function Dashboard() {
-  const users = JSON.parse(localStorage.getItem("zelvora_users") || "[]");
-  const orders = JSON.parse(localStorage.getItem("zelvora_orders") || "[]");
-  const revenue = orders.reduce((s, o) => s + (o.total || 0), 0);
+  const products = JSON.parse(localStorage.getItem("zelvora_admin_products") || "null") || SEED_PRODUCTS;
+  const users    = JSON.parse(localStorage.getItem("zelvora_users")  || "[]");
+  const orders   = JSON.parse(localStorage.getItem("zelvora_orders") || "[]");
+  const revenue  = orders.reduce((s, o) => s + (o.total || 0), 0);
 
   const stats = [
-    { label: "Total Revenue", value: `$${revenue.toFixed(2)}`, icon: "💰", trend: "+12.5%", color: "#e8957a" },
-    { label: "Total Products", value: products.length, icon: "✨", trend: "+2 new", color: "#c9a96e" },
-    { label: "Registered Users", value: users.length, icon: "👤", trend: "+8 this week", color: "#7ec8c8" },
-    { label: "Total Orders", value: orders.length, icon: "📦", trend: "+5 today", color: "#b39ddb" },
+    { label: "Total Revenue",   value: `$${revenue.toFixed(2)}`, icon: "💰", trend: "+12.5%", color: "#e8957a" },
+    { label: "Total Products",  value: products.length,           icon: "✨", trend: "+2 new",     color: "#c9a96e" },
+    { label: "Registered Users",value: users.length,             icon: "👤", trend: "+8 this week",color: "#7ec8c8" },
+    { label: "Total Orders",    value: orders.length,            icon: "📦", trend: "+5 today",    color: "#b39ddb" },
   ];
 
-  const recentUsers = users.slice(-5).reverse();
+  const recentUsers = [...users].reverse().slice(0, 5);
 
   return (
     <div className="adm-page">
@@ -69,7 +78,10 @@ export default function Dashboard() {
             <a href="/admin/users" className="adm-card-link">Manage →</a>
           </div>
           {recentUsers.length === 0 ? (
-            <div className="adm-empty">No users registered yet.</div>
+            <div className="adm-empty">
+              <p>No users registered yet.</p>
+              <p className="adm-empty-hint">Users appear here when they register on the storefront.</p>
+            </div>
           ) : (
             <div className="adm-user-list">
               {recentUsers.map((u) => (
@@ -84,9 +96,6 @@ export default function Dashboard() {
               ))}
             </div>
           )}
-          {recentUsers.length === 0 && (
-            <p className="adm-empty-hint">Users who register on the storefront appear here.</p>
-          )}
         </div>
       </div>
 
@@ -95,15 +104,14 @@ export default function Dashboard() {
         <div className="adm-card-header"><h3>Quick Actions</h3></div>
         <div className="adm-quick-actions">
           {[
-            { label: "Add Product", href: "/admin/products", icon: "+" },
-            { label: "View Orders", href: "/admin/orders", icon: "📦" },
-            { label: "Manage Users", href: "/admin/users", icon: "👥" },
-            { label: "Site Settings", href: "/admin/settings", icon: "⚙" },
-            { label: "Manage Routes", href: "/admin/routes", icon: "🗺" },
+            { label: "Add Product",   href: "/admin/products",  icon: "+" },
+            { label: "View Orders",   href: "/admin/orders",    icon: "📦" },
+            { label: "Manage Users",  href: "/admin/users",     icon: "👥" },
+            { label: "Site Settings", href: "/admin/settings",  icon: "⚙" },
+            { label: "Route Manager", href: "/admin/routes",    icon: "🗺" },
           ].map((a) => (
             <a key={a.label} href={a.href} className="adm-quick-btn">
-              <span>{a.icon}</span>
-              {a.label}
+              <span>{a.icon}</span>{a.label}
             </a>
           ))}
         </div>

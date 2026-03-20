@@ -1,21 +1,28 @@
 import { useState } from "react";
-import { products as initialProducts } from "../../shared/data/products";
 
-const EMPTY = {
-  id: null, name: "", category: "Face", price: "", rating: 4.5,
-  reviews: 0, badge: "", image: "", description: "", ingredients: "", howToUse: ""
-};
+const SEED_PRODUCTS = [
+  { id:1, name:"Velvet Glow Serum",       category:"Serums",       price:58, rating:4.9, reviews:214, badge:"Bestseller", image:"https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=500&q=80", description:"Our hero serum infused with 20% Vitamin C, hyaluronic acid, and rare rosehip extract.", ingredients:"Ascorbic Acid 20%, Hyaluronic Acid, Rosa Canina Fruit Oil", howToUse:"Apply 3–4 drops to clean skin every morning." },
+  { id:2, name:"Lumière Silk Foundation",  category:"Face",         price:45, rating:4.8, reviews:189, badge:"New",        image:"https://images.unsplash.com/photo-1631730359585-38a4935cbec4?w=500&q=80", description:"A weightless buildable foundation with SPF 30.",                                        ingredients:"Titanium Dioxide, Iron Oxides, Dimethicone",             howToUse:"Apply with fingers, sponge, or brush." },
+  { id:3, name:"Rose Petal Lip Balm",      category:"Lips",         price:18, rating:4.7, reviews:302, badge:null,         image:"https://images.unsplash.com/photo-1586495777744-4e6232bf4d3e?w=500&q=80", description:"Deeply nourishing lip balm with Bulgarian rose extract.",                              ingredients:"Rosa Damascena Flower Oil, Shea Butter, Tocopherol",     howToUse:"Apply liberally throughout the day." },
+  { id:4, name:"Midnight Repair Cream",    category:"Moisturisers", price:72, rating:4.9, reviews:156, badge:"Luxury",     image:"https://images.unsplash.com/photo-1556228720-195a672e8a03?w=500&q=80", description:"A rich night cream with retinol and peptides.",                                        ingredients:"Retinol 0.3%, Ceramides, Squalane, Niacinamide",         howToUse:"Apply a generous layer to face and neck each evening." },
+  { id:5, name:"Sculpt & Define Brow Gel", category:"Eyes",         price:24, rating:4.6, reviews:98,  badge:null,         image:"https://images.unsplash.com/photo-1583241800698-e8ab01830a66?w=500&q=80", description:"Flexible-hold clear brow gel.",                                                       ingredients:"Hydroxypropyl Cellulose, Panthenol, Castor Oil",         howToUse:"Brush upward through brows." },
+  { id:6, name:"Pore Perfecting Primer",   category:"Face",         price:32, rating:4.5, reviews:143, badge:null,         image:"https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?w=500&q=80", description:"Silky primer that blurs pores for 16 hours.",                                         ingredients:"Cyclopentasiloxane, Dimethicone, Niacinamide",           howToUse:"Apply a small amount before foundation." },
+  { id:7, name:"Glow Drops Illuminator",   category:"Face",         price:38, rating:4.8, reviews:201, badge:"Fan Fave",   image:"https://images.unsplash.com/photo-1599305445671-ac291c95aaa9?w=500&q=80", description:"Liquid highlighter drops for a glass-skin glow.",                                    ingredients:"Mica, Glycerin, Aloe Vera, Vitamin C",                  howToUse:"Mix with foundation or apply directly." },
+  { id:8, name:"Cherry Bloom Lip Gloss",   category:"Lips",         price:22, rating:4.7, reviews:178, badge:"New",        image:"https://images.unsplash.com/photo-1583241800698-e8ab01830a66?w=500&q=80", description:"High-shine non-sticky lip gloss with cherry extract.",                               ingredients:"Prunus Cerasus Extract, Castor Oil, Vitamin E",         howToUse:"Apply directly from the wand." },
+];
+
+const EMPTY = { id: null, name: "", category: "Face", price: "", rating: 4.5, reviews: 0, badge: "", image: "", description: "", ingredients: "", howToUse: "" };
 const CATEGORIES = ["Face", "Lips", "Eyes", "Serums", "Moisturisers"];
 
 export default function AdminProducts() {
   const [products, setProducts] = useState(() => {
     const saved = localStorage.getItem("zelvora_admin_products");
-    return saved ? JSON.parse(saved) : initialProducts;
+    return saved ? JSON.parse(saved) : SEED_PRODUCTS;
   });
-  const [showModal, setShowModal] = useState(false);
-  const [form, setForm] = useState(EMPTY);
-  const [isEdit, setIsEdit] = useState(false);
-  const [search, setSearch] = useState("");
+  const [showModal, setShowModal]   = useState(false);
+  const [form, setForm]             = useState(EMPTY);
+  const [isEdit, setIsEdit]         = useState(false);
+  const [search, setSearch]         = useState("");
   const [deleteConfirm, setDeleteConfirm] = useState(null);
 
   const save = (list) => {
@@ -23,23 +30,18 @@ export default function AdminProducts() {
     localStorage.setItem("zelvora_admin_products", JSON.stringify(list));
   };
 
-  const openAdd = () => { setForm({ ...EMPTY, id: Date.now() }); setIsEdit(false); setShowModal(true); };
+  const openAdd  = () => { setForm({ ...EMPTY, id: Date.now() }); setIsEdit(false); setShowModal(true); };
   const openEdit = (p) => { setForm(p); setIsEdit(true); setShowModal(true); };
 
   const handleSave = () => {
     if (!form.name || !form.price) return;
-    if (isEdit) {
-      save(products.map((p) => p.id === form.id ? { ...form, price: parseFloat(form.price) } : p));
-    } else {
-      save([...products, { ...form, price: parseFloat(form.price), id: Date.now() }]);
-    }
+    const product = { ...form, price: parseFloat(form.price) };
+    if (isEdit) save(products.map((p) => p.id === form.id ? product : p));
+    else        save([...products, { ...product, id: Date.now() }]);
     setShowModal(false);
   };
 
-  const handleDelete = (id) => {
-    save(products.filter((p) => p.id !== id));
-    setDeleteConfirm(null);
-  };
+  const handleDelete = (id) => { save(products.filter((p) => p.id !== id)); setDeleteConfirm(null); };
 
   const filtered = products.filter((p) =>
     p.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -58,25 +60,14 @@ export default function AdminProducts() {
 
       <div className="adm-card">
         <div className="adm-table-toolbar">
-          <input
-            className="adm-search"
-            placeholder="Search products..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
+          <input className="adm-search" placeholder="Search products..." value={search} onChange={(e) => setSearch(e.target.value)} />
           <span className="adm-count">{filtered.length} products</span>
         </div>
-
         <div className="adm-table-wrap">
           <table className="adm-table">
             <thead>
               <tr>
-                <th>Product</th>
-                <th>Category</th>
-                <th>Price</th>
-                <th>Rating</th>
-                <th>Badge</th>
-                <th>Actions</th>
+                <th>Product</th><th>Category</th><th>Price</th><th>Rating</th><th>Badge</th><th>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -94,7 +85,7 @@ export default function AdminProducts() {
                   <td>{p.badge ? <span className="adm-badge-pill">{p.badge}</span> : <span className="adm-muted">—</span>}</td>
                   <td>
                     <div className="adm-row-actions">
-                      <button className="adm-btn-edit" onClick={() => openEdit(p)}>Edit</button>
+                      <button className="adm-btn-edit"   onClick={() => openEdit(p)}>Edit</button>
                       <button className="adm-btn-delete" onClick={() => setDeleteConfirm(p.id)}>Delete</button>
                     </div>
                   </td>
@@ -105,7 +96,7 @@ export default function AdminProducts() {
         </div>
       </div>
 
-      {/* MODAL */}
+      {/* ADD / EDIT MODAL */}
       {showModal && (
         <div className="adm-modal-overlay" onClick={(e) => e.target === e.currentTarget && setShowModal(false)}>
           <div className="adm-modal">
@@ -156,10 +147,8 @@ export default function AdminProducts() {
               </div>
             </div>
             <div className="adm-modal-footer">
-              <button className="adm-btn-ghost" onClick={() => setShowModal(false)}>Cancel</button>
-              <button className="adm-btn-primary" onClick={handleSave}>
-                {isEdit ? "Save Changes" : "Add Product"}
-              </button>
+              <button className="adm-btn-ghost"   onClick={() => setShowModal(false)}>Cancel</button>
+              <button className="adm-btn-primary"  onClick={handleSave}>{isEdit ? "Save Changes" : "Add Product"}</button>
             </div>
           </div>
         </div>
@@ -172,7 +161,7 @@ export default function AdminProducts() {
             <h3>Delete Product?</h3>
             <p>This action cannot be undone.</p>
             <div className="adm-modal-footer">
-              <button className="adm-btn-ghost" onClick={() => setDeleteConfirm(null)}>Cancel</button>
+              <button className="adm-btn-ghost"  onClick={() => setDeleteConfirm(null)}>Cancel</button>
               <button className="adm-btn-danger" onClick={() => handleDelete(deleteConfirm)}>Delete</button>
             </div>
           </div>

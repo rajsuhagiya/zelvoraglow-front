@@ -5,7 +5,10 @@ import { useAdminAuth } from "../context/AdminAuthContext";
 export default function AdminLogin() {
   const { adminLogin } = useAdminAuth();
   const navigate = useNavigate();
-  const [form, setForm] = useState({ email: "admin@zelvoraglow.com", password: "admin123" });
+  const [form, setForm] = useState({
+    email: "admin@gmail.com",
+    password: "admin123",
+  });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -26,23 +29,41 @@ export default function AdminLogin() {
         <div className="adm-login-brand">
           <span className="adm-logo-icon">✦</span>
           <span className="adm-login-brand-name">
-            <span style={{ color: "#e8957a" }}>Z</span>elvora<span style={{ color: "#c9a96e" }}>Glow</span>
+            <span style={{ color: "#e8957a" }}>Z</span>elvora
+            <span style={{ color: "#c9a96e" }}>Glow</span>
           </span>
         </div>
         <h2 className="adm-login-tagline">
-          Admin<br />Command<br />Centre
+          Admin
+          <br />
+          Command
+          <br />
+          Centre
         </h2>
-        <p className="adm-login-sub">Manage your entire cosmetic empire from one powerful dashboard.</p>
+        <p className="adm-login-sub">
+          Manage your entire cosmetic empire from one powerful dashboard.
+        </p>
         <div className="adm-login-stats">
-          <div className="adm-ls"><strong>8</strong><span>Products</span></div>
-          <div className="adm-ls"><strong>50K+</strong><span>Customers</span></div>
-          <div className="adm-ls"><strong>4.9★</strong><span>Avg Rating</span></div>
+          <div className="adm-ls">
+            <strong>8</strong>
+            <span>Products</span>
+          </div>
+          <div className="adm-ls">
+            <strong>50K+</strong>
+            <span>Customers</span>
+          </div>
+          <div className="adm-ls">
+            <strong>4.9★</strong>
+            <span>Avg Rating</span>
+          </div>
         </div>
       </div>
       <div className="adm-login-right">
         <div className="adm-login-card">
           <h3>Sign in to Admin</h3>
-          <p className="adm-login-hint">Default: admin@zelvoraglow.com / admin123</p>
+          <p className="adm-login-hint">
+            Default: admin@zelvoraglow.com / admin123
+          </p>
           {error && <div className="adm-error">{error}</div>}
           <form onSubmit={handleSubmit} className="adm-form">
             <div className="adm-field">
@@ -63,11 +84,17 @@ export default function AdminLogin() {
                 required
               />
             </div>
-            <button type="submit" className="adm-btn-primary" disabled={loading}>
+            <button
+              type="submit"
+              className="adm-btn-primary"
+              disabled={loading}
+            >
               {loading ? "Signing in..." : "Access Dashboard →"}
             </button>
           </form>
-          <a href="/" className="adm-back-link">← Back to store</a>
+          <a href="/" className="adm-back-link">
+            ← Back to store
+          </a>
         </div>
       </div>
     </div>
